@@ -4,6 +4,6 @@ appName: metallb ##
 userGivenName: metallb
 destNamespace: metallb
 helmChartURL:  https://charts.bitnami.com/bitnami
-helmChartVersion: 4.15.0
+helmChartVersion: 6.4.22
 helmChartName: metallb
 syncWave: 1

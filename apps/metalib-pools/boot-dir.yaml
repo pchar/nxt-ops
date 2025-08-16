@@ -3,4 +3,4 @@
 appName: metallb-pools ## 
 userGivenName: metallb-pools
 destNamespace: metallb
-syncWave: 1
+syncWave: 2
