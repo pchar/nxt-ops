@@ -10,17 +10,17 @@ metadata:
   namespace: argocd
 spec:
   clusterResourceWhitelist:
-  - group: '*'
-    kind: '*'
+    - group: '*'
+      kind: '*'
   description: boot project
   destinations:
-  - namespace: '*'
-    server: '*'
+    - namespace: '*'
+      server: '*'
   namespaceResourceWhitelist:
-  - group: '*'
-    kind: '*'
+    - group: '*'
+      kind: '*'
   sourceRepos:
-  - '*'
+    - '*'
 status: {}
 
 ---
@@ -35,17 +35,17 @@ metadata:
 spec:
   goTemplate: true
   generators:
-  - git:
-      files:
-      - path: apps/*/boot.yaml
-      repoURL: https://github.com/pchar/nxt-ops.git
-      requeueAfterSeconds: 20
-      revision: main
-      template:
-        metadata: {}
-        spec:
-          destination: {}
-          project: ""
+    - git:
+        files:
+          - path: apps/*/boot.yaml
+        repoURL: https://github.com/pchar/nxt-ops.git
+        requeueAfterSeconds: 20
+        revision: main
+        template:
+          metadata: {}
+          spec:
+            destination: {}
+            project: ""
   syncPolicy: {}
   template:
     metadata:
@@ -56,24 +56,13 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
-      name: boot-{{ userGivenName }}
+      name: 'boot-{{ .userGivenName }}'
       namespace: argocd
     spec:
       project: boot
       destination:
         namespace: '{{ .destNamespace }}'
         server: '{{ .destServer }}'
-      sources:
-        - repoURL: '{{ .helmChartURL }}'
-          targetRevision: '{{ .helmChartVersion }}'
-          chart: '{{ .helmChartName }}'
-          helm:
-            releaseName: '{{ .helmChartName }}'
-            valueFiles:
-              - $values/apps/{{ .helmChartName }}/values.yaml
-        - repoURL: https://github.com/pchar/nxt-ops.git
-          targetRevision: main
-          ref: values
       syncPolicy:
         automated:
           allowEmpty: true
@@ -85,7 +74,29 @@ spec:
           - Wait=true
       ignoreDifferences:
         - group: argoproj.io
+          kind: Application
           jsonPointers:
             - /status
-          kind: Application
+    # <- IMPORTANT: templatePatch is a single string. Put your conditionals inside.
+    templatePatch: |
+      {{- if eq .type "helm" }}
+      spec:
+        sources:
+          - repoURL: '{{ .helmChartURL }}'
+            targetRevision: '{{ .helmChartVersion }}'
+            chart: '{{ .helmChartName }}'
+            helm:
+              releaseName: '{{ .helmChartName }}'
+              valueFiles:
+                - $values/apps/{{ .helmChartName }}/values.yaml
+          - repoURL: https://github.com/pchar/nxt-ops.git
+            targetRevision: main
+            ref: values
+      {{- else if eq .type "dir" }}
+      spec:
+        source:
+          repoURL: https://github.com/pchar/nxt-ops.git
+          targetRevision: main
+          path: 'apps/{{ .appName }}/templates/'
+      {{- end }}
 status: {}
