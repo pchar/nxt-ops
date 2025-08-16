@@ -1,0 +1,9 @@
+crds:
+  enabled: true
+  validationFailurePolicy: Fail
+
+ipAddressPools:
+  - name: first-pool
+    namespace: metallb
+    addresses:
+      - 10.0.0.150-10.0.0.175

@@ -1,0 +1,9 @@
+## Custom Values for ArogoCD Autopilot
+# This file is used to customize the ArgoCD Autopilot application set for Sentinel.
+appName: metallb ## 
+userGivenName: metallb
+destNamespace: metallb
+helmChartURL:  https://charts.bitnami.com/bitnami
+helmChartVersion: 4.15.0
+helmChartName: metallb
+syncWave: 1

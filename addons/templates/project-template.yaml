@@ -2,17 +2,17 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   annotations:
-    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd-autopilot.argoproj-labs.io/default-dest-server: {{ .destinationServer }}
     argocd.argoproj.io/sync-options: PruneLast=true
     argocd.argoproj.io/sync-wave: "-2"
   creationTimestamp: null
-  name: boot
+  name: {{ .project }}
   namespace: argocd
 spec:
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
-  description: boot project
+  description: {{ .project }} project
   destinations:
   - namespace: '*'
     server: '*'
@@ -22,30 +22,28 @@ spec:
   sourceRepos:
   - '*'
 status: {}
-
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: boot
+  name: {{ .project }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-  creationTimestamp: null
 spec:
   goTemplate: true
   generators:
-  - git:
-      files:
-      - path: apps/*/boot.yaml
-      repoURL: https://github.com/pchar/nxt-ops.git
-      requeueAfterSeconds: 20
-      revision: main
-      template:
-        metadata: {}
-        spec:
-          destination: {}
-          project: ""
+    - git:
+        files:
+          - path: values/*/{{ .project }}.yaml
+        repoURL: https://github.com/pchar/nxt-ops.git
+        requeueAfterSeconds: 20
+        revision: main
+        template:
+          metadata: {}
+          spec:
+            destination: {}
+            project: ""
   syncPolicy: {}
   template:
     metadata:
@@ -56,13 +54,13 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
-      name: boot-{{ userGivenName }}
+      name: '{{ .project }}-{{ .userGivenName }}'
       namespace: argocd
     spec:
-      project: boot
+      project: {{ .project }}
       destination:
+        name: {{ .destinationCluster }}
         namespace: '{{ .destNamespace }}'
-        server: '{{ .destServer }}'
       sources:
         - repoURL: '{{ .helmChartURL }}'
           targetRevision: '{{ .helmChartVersion }}'
@@ -70,7 +68,7 @@ spec:
           helm:
             releaseName: '{{ .helmChartName }}'
             valueFiles:
-              - $values/apps/{{ .helmChartName }}/values.yaml
+              - $values/apps/{{ .helmChartName }}/{{ .project }}.yaml
         - repoURL: https://github.com/pchar/nxt-ops.git
           targetRevision: main
           ref: values
