@@ -31,7 +31,6 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-  creationTimestamp: null
 spec:
   goTemplate: true
   generators:
@@ -41,12 +40,6 @@ spec:
       repoURL: https://github.com/pchar/nxt-ops.git
       requeueAfterSeconds: 20
       revision: main
-      template:
-        metadata: {}
-        spec:
-          destination: {}
-          project: ""
-  syncPolicy: {}
   template:
     metadata:
       annotations:
@@ -56,7 +49,7 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
-      name: boot-{{ userGivenName }}
+      name: boot-{{ .userGivenName }}
       namespace: argocd
     spec:
       project: boot
@@ -68,7 +61,8 @@ spec:
           targetRevision: '{{ .helmChartVersion }}'
           chart: '{{ .helmChartName }}'
           helm:
-            releaseName: '{{ .helmChartName }}'
+            # Often better as appName, but keep your choice if you want:
+            releaseName: '{{ .appName }}'
             valueFiles:
               - $values/apps/{{ .helmChartName }}/values.yaml
         - repoURL: https://github.com/pchar/nxt-ops.git
@@ -89,6 +83,7 @@ spec:
             - /status
           kind: Application
 status: {}
+
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -97,7 +92,6 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-  creationTimestamp: null
 spec:
   goTemplate: true
   generators:
@@ -107,12 +101,6 @@ spec:
       repoURL: https://github.com/pchar/nxt-ops.git
       requeueAfterSeconds: 20
       revision: main
-      template:
-        metadata: {}
-        spec:
-          destination: {}
-          project: ""
-  syncPolicy: {}
   template:
     metadata:
       annotations:
@@ -122,7 +110,7 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
-      name: boot-{{ userGivenName }}
+      name: boot-{{ .userGivenName }}
       namespace: argocd
     spec:
       project: boot
@@ -130,8 +118,9 @@ spec:
         namespace: '{{ .destNamespace }}'
         server: '{{ .destServer }}'
       source:
-        path:  apps/{{ .appName }}/templates/
         repoURL: https://github.com/pchar/nxt-ops.git
+        targetRevision: main
+        path: apps/{{ .appName }}/templates/
       syncPolicy:
         automated:
           allowEmpty: true
