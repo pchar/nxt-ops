@@ -1,0 +1,11 @@
+{
+  "appName": "hello-world",
+  "userGivenName": "hello-world",
+  "destNamespace": "default",
+  "destServer": "https://upmaster.nextmind.net:6443",
+  "srcPath": "apps/hello-world/overlays/boot",
+  "srcRepoURL": "https://github.com/pchar/nxt-ops.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
