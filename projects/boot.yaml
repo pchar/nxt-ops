@@ -55,7 +55,7 @@ spec:
       project: boot
       destination:
         namespace: '{{ .destNamespace }}'
-        server: in-cluster
+        server: nxt
       sources:
         - repoURL: '{{ .helmChartURL }}'
           targetRevision: '{{ .helmChartVersion }}'
@@ -116,7 +116,7 @@ spec:
       project: boot
       destination:
         namespace: '{{ .destNamespace }}'
-        server: in-cluster
+        server: nxt
       source:
         repoURL: https://github.com/pchar/nxt-ops.git
         targetRevision: main
