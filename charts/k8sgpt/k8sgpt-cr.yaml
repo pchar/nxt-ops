@@ -1,0 +1,14 @@
+apiVersion: core.k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt
+  namespace: k8sgpt-operator-system
+spec:
+  enableAI: true
+  model: gpt-4o-mini
+  backend: openai
+  secret:
+    name: k8sgpt-ai
+    key: openai-api-key
+  noCache: false
+  version: v0.4.23
