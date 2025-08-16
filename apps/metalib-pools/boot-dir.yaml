@@ -1,6 +1,6 @@
 ## Custom Values for ArogoCD Autopilot
 # This file is used to customize the ArgoCD Autopilot application set for Sentinel.
-appName: metallb ## 
-userGivenName: metallb
+appName: metallb-pools ## 
+userGivenName: metallb-pools
 destNamespace: metallb
 syncWave: 1
