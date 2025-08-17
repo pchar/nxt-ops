@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: boot-helm
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  goTemplate: true
+  generators:
+  - git:
+      files:
+      - path: apps/*/boot-helm.yaml
+      repoURL: https://github.com/pchar/nxt-ops.git
+      requeueAfterSeconds: 20
+      revision: main
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ default "0" .syncWave }}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io/foreground
+      labels:
+        app.kubernetes.io/managed-by: argocd-autopilot
+        app.kubernetes.io/name: '{{ .appName }}'
+      name: boot-{{ .userGivenName }}
+      namespace: argocd
+    spec:
+      project: boot
+      destination:
+        namespace: '{{ .destNamespace }}'
+        name: in-cluster
+      sources:
+        - repoURL: '{{ .helmChartURL }}'
+          targetRevision: '{{ .helmChartVersion }}'
+          chart: '{{ .helmChartName }}'
+          helm:
+            # Often better as appName, but keep your choice if you want:
+            releaseName: '{{ .appName }}'
+            valueFiles:
+              - $values/apps/{{ .helmChartName }}/values.yaml
+        - repoURL: https://github.com/pchar/nxt-ops.git
+          targetRevision: main
+          ref: values
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - Validate=true
+          - Wait=true
+      ignoreDifferences:
+        - group: argoproj.io
+          jsonPointers:
+            - /status
+          kind: Application
+status: {}
