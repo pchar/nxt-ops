@@ -1,0 +1,60 @@
+# echo + Ingress that asks Traefik for a real cert via resolver "letsencrypt"
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tls-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+  namespace: tls-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: echo }
+  template:
+    metadata:
+      labels: { app: echo }
+    spec:
+      containers:
+        - name: echo
+          image: ghcr.io/ealen/echo-server:latest
+          ports: [{ containerPort: 80 }]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+  namespace: tls-test
+spec:
+  selector: { app: echo }
+  ports: [{ port: 80, targetPort: 80 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo
+  namespace: tls-test
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+    # ExternalDNS: publish this hostname with a short TTL
+    external-dns.alpha.kubernetes.io/hostname: echo.nextmind.net
+    external-dns.alpha.kubernetes.io/ttl: "60"
+    external-dns.alpha.kubernetes.io/target: gate.nextmind.net
+
+spec:
+  rules:
+    - host: echo.nextmind.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
