@@ -12,11 +12,45 @@ spec:
       requeueAfterSeconds: 20
       files:
         - path: apps/*/boot-dir.yaml
+      template:
+        spec:
+          project: "default"
+          source:
+             repoURL: https://github.com/pchar/nxt-ops.git
+             targetRevision: main
+             path: apps/{{ .appName }}/templates/
+          destination: {}
+        metadata: {}
+
+  - git:
+      repoURL: https://github.com/pchar/nxt-ops.git
+      revision: main
+      requeueAfterSeconds: 20
+      files:
+        - path: apps/*/boot-helm.yaml
+      template:
+        spec:
+          project: "default"
+          sources:
+             - repoURL: '{{ .helmChartURL }}'
+               targetRevision: '{{ .helmChartVersion }}'
+               chart: '{{ .helmChartName }}'
+               helm:
+                  releaseName: '{{ .helmChartName }}'
+                  valueFiles:
+                    - $values/apps/{{ .helmChartName }}/values.yaml
+             - repoURL: https://github.com/pchar/nxt-ops.git
+               targetRevision: main
+               ref: values
+          destination: {}
+        metadata: {}
+
   # Determines whether go templating will be used in the `template` field below.
   goTemplate: true
   # Optional list of go templating options, see https://pkg.go.dev/text/template#Template.Option
   # This is only relevant if `goTemplate` is true
-  goTemplateOptions: ["missingkey=error"]
+  #goTemplateOptions: ["missingkey=error"]
+  goTemplateOptions: ["missingkey=default"]
 
   # These fields are identical to the Application spec.
   # The generator's template field takes precedence over the spec's template fields
@@ -35,10 +69,6 @@ spec:
     spec:
       project: default
       # defines from which Git repository to extract the desired Application manifests
-      source:
-        repoURL: https://github.com/pchar/nxt-ops.git
-        targetRevision: main
-        path: apps/{{ .appName }}/templates/
       destination:
         # Only one of name or server may be specified: if both are specified, an error is returned.
         #  Name of the cluster (within Argo CD) to deploy to
