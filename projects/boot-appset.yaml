@@ -14,7 +14,7 @@ spec:
         - path: apps/*/boot-dir.yaml
       template:
         spec:
-          project: "default"
+          project: boot
           source:
              repoURL: https://github.com/pchar/nxt-ops.git
              targetRevision: main
@@ -30,7 +30,7 @@ spec:
         - path: apps/*/boot-helm.yaml
       template:
         spec:
-          project: "default"
+          project: boot
           sources:
              - repoURL: '{{ .helmChartURL }}'
                targetRevision: '{{ .helmChartVersion }}'
