@@ -7,4 +7,4 @@ helmChartURL:  https://charts.bitnami.com/bitnami
 helmChartVersion: 6.4.22
 helmChartName: metallb
 syncWave: 1
-envLabel: dev
+phase: boot
