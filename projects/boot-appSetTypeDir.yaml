@@ -14,6 +14,17 @@ spec:
       repoURL: https://github.com/pchar/nxt-ops.git
       requeueAfterSeconds: 20
       revision: main
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      steps:
+        - matchExpressions:
+            - key: env
+              operator: In
+              values:
+                - dev
+          maxUpdate: 1
+
   template:
     metadata:
       annotations:
