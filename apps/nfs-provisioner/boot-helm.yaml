@@ -7,4 +7,4 @@ helmChartURL:  https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
 helmChartVersion: 6.4.22
 helmChartName: nfs-subdir-external-provisioner
 syncWave: 1
-phase: boot
+phase: core
