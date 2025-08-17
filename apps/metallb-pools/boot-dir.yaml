@@ -4,3 +4,4 @@ appName: metallb-pools ##
 userGivenName: metallb-pools
 destNamespace: metallb
 syncWave: 2
+envLabel: test
