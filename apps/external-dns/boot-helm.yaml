@@ -1,0 +1,10 @@
+## Custom Values for ArogoCD Autopilot
+# This file is used to customize the ArgoCD Autopilot application set for Sentinel.
+appName: external-dns
+userGivenName: external-dns
+destNamespace: external-dns
+helmChartURL:  https://charts.bitnami.com/bitnami
+helmChartVersion: 9.0.3
+helmChartName: external-dns
+syncWave: 1
+phase: core

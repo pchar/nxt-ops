@@ -1,7 +1,7 @@
 provider: webhook
 interval: 60m
 triggerLoopOnEvent: true
-logLevel: trace
+logLevel: debug
 txtPrefix: "zzz-"
 policy: upsert-only   # or "sync" for full sync (ie also deletions)
 txtOwnerId: blah
