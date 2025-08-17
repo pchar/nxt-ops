@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: boot-dir
+  name: boot-test
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -9,24 +9,38 @@ spec:
   goTemplate: true
   generators:
   - git:
-      files:
-      - path: apps/*/boot-dir.yaml
       repoURL: https://github.com/pchar/nxt-ops.git
-      requeueAfterSeconds: 20
       revision: main
+      requeueAfterSeconds: 20
+      files:
+        - path: apps/*/boot-dir.yaml
+
+  # ✅ Progressive syncs use RollingSync + rollingSync
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
+    type: RollingSync
+    rollingSync:
       steps:
         - matchExpressions:
             - key: env
               operator: In
-              values:
-                - dev
+              values: ["dev"]
           maxUpdate: 1
+        # add more steps as needed
+        # - matchExpressions:
+        #     - key: env
+        #       operator: In
+        #       values: ["qa"]
+        #   maxUpdate: 100%
+        # - matchExpressions:
+        #     - key: env
+        #       operator: In
+        #       values: ["prod"]
+        #   maxUpdate: 10%
 
   template:
     metadata:
+      name: boot-{{ .userGivenName }}
+      namespace: argocd
       annotations:
         argocd.argoproj.io/sync-wave: '{{ default "0" .syncWave }}'
       finalizers:
@@ -34,13 +48,13 @@ spec:
       labels:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
-      name: boot-{{ .userGivenName }}
-      namespace: argocd
+        # ✅ This label is what your matchExpressions select on
+        env: '{{ default "dev" .env }}'
     spec:
       project: boot
       destination:
-        namespace: '{{ .destNamespace }}'
         name: in-cluster
+        namespace: '{{ .destNamespace }}'
       source:
         repoURL: https://github.com/pchar/nxt-ops.git
         targetRevision: main
@@ -56,7 +70,5 @@ spec:
           - Wait=true
       ignoreDifferences:
         - group: argoproj.io
-          jsonPointers:
-            - /status
           kind: Application
-status: {}
+          jsonPointers: ["/status"]
