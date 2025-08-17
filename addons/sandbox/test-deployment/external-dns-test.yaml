@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: external-dns-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+  namespace: external-dns-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+        - name: echo
+          image: ghcr.io/ealen/echo-server:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo
+  namespace: external-dns-test
+spec:
+  type: ClusterIP
+  selector:
+    app: echo
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo
+  namespace: external-dns-test
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # Ask ExternalDNS to manage this hostname (set this to a zone you control)
+    external-dns.alpha.kubernetes.io/hostname: echo.sandbox.datavillage.me
+    # Optional but handy for quick tests:
+    external-dns.alpha.kubernetes.io/ttl: "60"
+spec:
+  rules:
+    - host: echo.sandbox.datavillage.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
