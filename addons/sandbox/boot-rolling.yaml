@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: boot-test
+  name: boot-test1
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
@@ -15,7 +15,6 @@ spec:
       files:
         - path: apps/*/boot-dir.yaml
 
-  # ✅ Progressive syncs use RollingSync + rollingSync
   strategy:
     type: RollingSync
     rollingSync:
@@ -25,18 +24,7 @@ spec:
               operator: In
               values: ["dev"]
           maxUpdate: 1
-        # add more steps as needed
-        # - matchExpressions:
-        #     - key: env
-        #       operator: In
-        #       values: ["qa"]
-        #   maxUpdate: 100%
-        # - matchExpressions:
-        #     - key: env
-        #       operator: In
-        #       values: ["prod"]
-        #   maxUpdate: 10%
-
+  
   template:
     metadata:
       name: boot-{{ .userGivenName }}
@@ -66,9 +54,4 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - Validate=true
-          - Wait=true
-      ignoreDifferences:
-        - group: argoproj.io
-          kind: Application
-          jsonPointers: ["/status"]
+
