@@ -67,7 +67,7 @@ spec:
        #envLabel: '{{ default "dev" .envLabel }}'
         phase: '{{ default "none" .phase }}'
     spec:
-      project: default
+      project: boot
       # defines from which Git repository to extract the desired Application manifests
       destination:
         # Only one of name or server may be specified: if both are specified, an error is returned.
