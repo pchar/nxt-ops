@@ -10,7 +10,7 @@ configMapGenerator:
       usernameSecret:
         key: git_username
         name: autopilot-secret
-    
+  - applicationsetcontroller.enable.progressive.syncs=true
   name: argocd-cm
 kind: Kustomization
 namespace: argocd
