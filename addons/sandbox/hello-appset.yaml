@@ -22,9 +22,18 @@ spec:
   # The generator's template field takes precedence over the spec's template fields
   template:
     metadata:
-      name: test-hello-world-app
+      name: boot-{{ .userGivenName }}
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ default "0" .syncWave }}'
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io/foreground
+      labels:
+        app.kubernetes.io/managed-by: argocd-autopilot
+        app.kubernetes.io/name: '{{ .appName }}'
+       #envLabel: '{{ default "dev" .envLabel }}'
+        envLabel: dev
     spec:
-      project: boot
+      project: default
       syncPolicy: 
         automated:
           selfHeal: true    
@@ -51,7 +60,7 @@ spec:
     # applicationsSync: create-update
 
     # Prevents ApplicationSet controller from modifying Applications. Delete is allowed.
-    # applicationsSync: create-delete
+    #applicationsSync: create-delete
 
     # Prevent an Application's child resources from being deleted, when the parent Application is deleted
     preserveResourcesOnDeletion: true
@@ -67,8 +76,8 @@ spec:
             - key: envLabel
               operator: In
               values:
-                - env-dev
-        # maxUpdate: 100%  # if undefined, all applications matched are updated together (default is 100%)
+                - dev
+          maxUpdate: 100 # if undefined, all applications matched are updated together (default is 100%)
         - matchExpressions:
             - key: envLabel
               operator: In
