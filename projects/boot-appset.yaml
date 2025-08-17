@@ -38,7 +38,7 @@ spec:
                helm:
                   releaseName: '{{ .helmChartName }}'
                   valueFiles:
-                    - $values/apps/{{ .helmChartName }}/values.yaml
+                    - $values/apps/{{ .appName }}/values.yaml
              - repoURL: https://github.com/pchar/nxt-ops.git
                targetRevision: main
                ref: values
