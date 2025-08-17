@@ -34,11 +34,6 @@ spec:
         envLabel: dev
     spec:
       project: default
-      syncPolicy: 
-        automated:
-          selfHeal: true    
-        syncOptions:
-        - CreateNamespace=true  
       # defines from which Git repository to extract the desired Application manifests
       source:
         repoURL: https://github.com/pchar/nxt-ops.git
@@ -54,10 +49,10 @@ spec:
   # This sync policy pertains to the ApplicationSet, not to the Applications it creates.
   syncPolicy:
     # Prevents ApplicationSet controller from modifying or deleting Applications
-    applicationsSync: create-only
+    #applicationsSync: create-only
 
     # Prevents ApplicationSet controller from deleting Applications. Update is allowed
-    # applicationsSync: create-update
+    applicationsSync: create-update
 
     # Prevents ApplicationSet controller from modifying Applications. Delete is allowed.
     #applicationsSync: create-delete
