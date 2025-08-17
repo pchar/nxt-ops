@@ -1,0 +1,10 @@
+## Custom Values for ArogoCD Autopilot
+# This file is used to customize the ArgoCD Autopilot application set for Sentinel.
+appName: nfs-provisioner
+userGivenName: nfs-provisioner
+destNamespace: nfs-provisioner
+helmChartURL:  https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
+helmChartVersion: 6.4.22
+helmChartName: nfs-subdir-external-provisioner
+syncWave: 1
+phase: boot

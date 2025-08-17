@@ -1,0 +1,23 @@
+# values.yaml for nfs-subdir-external-provisioner
+nfs:
+  server: sun.lan
+  path: /Volumes/HDD3/talosshare
+
+storageClass:
+  create: true
+  name: nfs-client
+  defaultClass: true
+  reclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=3
+    - hard
+    - intr
+    - noatime
+    - rsize=1048576
+    - wsize=1048576
+    - tcp
+  # volumeBindingMode defaults to Immediate, but you can also set WaitForFirstConsumer
+  volumeBindingMode: Immediate
+
+# namespace in which to deploy
+namespace: nfs-provisioner

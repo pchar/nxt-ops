@@ -75,6 +75,12 @@ spec:
         name: in-cluster # cluster is restricted
         # Target namespace in which to deploy the manifests from source 
         namespace: '{{ .destNamespace }}' # namespace is restricted
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - Validate=true
+          - Wait=true
+
 
   # This sync policy pertains to the ApplicationSet, not to the Applications it creates.
   syncPolicy:
