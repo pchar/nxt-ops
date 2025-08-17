@@ -31,7 +31,7 @@ spec:
         app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ .appName }}'
        #envLabel: '{{ default "dev" .envLabel }}'
-        envLabel: dev
+        envLabel: '{{ default "none" .envLabel }}'
     spec:
       project: default
       # defines from which Git repository to extract the desired Application manifests
