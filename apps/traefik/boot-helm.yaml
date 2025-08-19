@@ -3,7 +3,7 @@
 appName: traefik
 userGivenName: traefik
 destNamespace: traefik
-helmChartURL:  https://charts.bitnami.com/bitnami
+helmChartURL:  https://traefik.github.io/charts
 helmChartVersion: 37.0.0
 helmChartName: traefik
 syncWave: 1
