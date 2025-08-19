@@ -1,35 +1,6 @@
-# Persistence for ACME (acme.json) and /data
-persistence:
-  enabled: true
-  name: data
-  accessMode: ReadWriteOnce
-  size: 128Mi
-  path: /data
-  annotations: {}
 
-# Certificates resolvers configuration (v33+)
-certificatesResolvers:
-  letsencrypt:
-    acme:
-      email: pch@nextmind.net
-      storage: /data/acme.json
-      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory  # uncomment for testing
-      dnsChallenge:
-        provider: hurricane
-        resolvers:
-          - "1.1.1.1:53"
-          - "8.8.8.8:53"
-        delayBeforeCheck: 5
 
 # Service configuration
 service:
   spec:
     externalTrafficPolicy: Local
-
-# Environment variables (inject Hurricane Electric tokens from a Secret)
-env:
-  - name: HURRICANE_TOKENS
-    valueFrom:
-      secretKeyRef:
-        name: traefik-he-ddns
-        key: HURRICANE_TOKENS
