@@ -1,0 +1,10 @@
+## Custom Values for ArogoCD Autopilot
+# This file is used to customize the ArgoCD Autopilot application set for Sentinel.
+appName: traefik
+userGivenName: traefik
+destNamespace: traefik
+helmChartURL:  https://charts.bitnami.com/bitnami
+helmChartVersion: 37.0.0
+helmChartName: traefik
+syncWave: 1
+phase: core
