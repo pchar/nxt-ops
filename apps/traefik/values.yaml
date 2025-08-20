@@ -1,6 +1,42 @@
+persistence:
+  # -- Enable persistence using Persistent Volume Claims
+  # ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+  # It can be used to store TLS certificates, see `storage` in certResolvers
+  enabled: true
+  name: data
+  #  existingClaim: ""
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  # storageClass: ""
+  # volumeName: ""
+  path: /data
+  annotations: {}
+  # -- Only mount a subpath of the Volume into the pod
+  # subPath: ""
+
+# -- Certificates resolvers configuration
+certificatesResolvers: 
+  letsencrypt:
+#     # for challenge options cf. https://doc.traefik.io/traefik/https/acme/
+    email: pch@nextmind.net
+#     dnsChallenge:
+#       # also add the provider's required configuration under env
+#       # or expand then from secrets/configmaps with envfrom
+#       # cf. https://doc.traefik.io/traefik/https/acme/#providers
+#       provider: digitalocean
+#       # add futher options for the dns challenge as needed
+#       # cf. https://doc.traefik.io/traefik/https/acme/#dnschallenge
+#       delayBeforeCheck: 30
+#       resolvers:
+#         - 1.1.1.1
+#         - 8.8.8.8
+#     tlsChallenge: true
+    httpChallenge:
+      entryPoint: "web"
+#     # It has to match the path with a persistent volume
+    storage: /data/acme.json
 
 
-# Service configuration
 service:
-  spec:
+  spec: 
     externalTrafficPolicy: Local
