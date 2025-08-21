@@ -45,16 +45,18 @@ metadata:
   name: echo
   namespace: tls-test
   annotations:
+    # Use Traefik’s ingress class (v3+ prefers `ingressClassName` field)
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
-    # ExternalDNS: publish this hostname with a short TTL
+
+    # ExternalDNS (optional, only if you use external-dns for DNS records)
     external-dns.alpha.kubernetes.io/hostname: echo.nextmind.net
     external-dns.alpha.kubernetes.io/ttl: "60"
     external-dns.alpha.kubernetes.io/target: gate.nextmind.net
-
 spec:
+  ingressClassName: traefik   # <- recommended in networking.k8s.io/v1
   rules:
     - host: echo.nextmind.net
       http:
@@ -66,3 +68,8 @@ spec:
                 name: echo
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - echo.nextmind.net
+      secretName: echo-nextmind-net-tls   # Traefik will populate this automatically
+
